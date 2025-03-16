@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import axios from 'axios';
+import { useRouter } from 'expo-router';
 
 export default function Register({ navigation }) {
   const [name, setName] = useState('');
@@ -10,6 +11,7 @@ export default function Register({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const router = useRouter();
 
   const validate = () => {
     const newErrors = {};
@@ -128,7 +130,7 @@ export default function Register({ navigation }) {
           
           <TouchableOpacity 
             style={styles.loginLink} 
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => router.push('/Index')}
           >
             <Text style={styles.loginLinkText}>Already have an account? Login</Text>
           </TouchableOpacity>
