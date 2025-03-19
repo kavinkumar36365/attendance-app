@@ -15,7 +15,9 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "jsEngine": "hermes",
+      "package": "com.kavinkumar36365.attendanceapp"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +38,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0b7daa2f-e05d-4ef1-aeeb-3d963af8aac4"
+      }
     }
   }
 }
