@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, CheckBox, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
+
 
 export default function SignIn() {
   const [rememberMe, setRememberMe] = React.useState(false);
@@ -25,13 +26,7 @@ export default function SignIn() {
           secureTextEntry
         />
         <View style={styles.options}>
-          <View style={styles.checkboxContainer}>
-            <CheckBox
-              value={rememberMe}
-              onValueChange={setRememberMe}
-            />
-            <Text style={styles.label}>Remember me</Text>
-          </View>
+          
           <TouchableOpacity>
             <Text style={styles.forgotPassword}>Forget Password?</Text>
           </TouchableOpacity>

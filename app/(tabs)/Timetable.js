@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet,Button, Text, View, ScrollView, TouchableOpacity, Alert, Platform, PermissionsAndroid } from 'react-native';
+import { StyleSheet, Button, Text, View, ScrollView, TouchableOpacity, Alert, Platform, PermissionsAndroid } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
 import * as LocalAuthentication from 'expo-local-authentication';
-import axios from 'axios';
 
 const manager = new BleManager();
 
@@ -13,9 +12,9 @@ export default function Timetable() {
   const [uuid, setUuid] = useState('');
   const [rssi, setRssi] = useState(0);
   const [advertisedServiceUUIDs, setAdvertisedServiceUUIDs] = useState([]);
+  const [selectedDay, setSelectedDay] = useState('01 MON');
 
   useEffect(() => {
-    // Check if biometric authentication is supported
     (async () => {
       try {
         const supported = await LocalAuthentication.hasHardwareAsync();
@@ -82,7 +81,6 @@ export default function Timetable() {
     if (Platform.OS === 'android') {
       const apiLevel = parseInt(Platform.Version.toString(), 10);
 
-      // For Android below 12 (API < 31)
       if (apiLevel < 31) {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
@@ -90,7 +88,6 @@ export default function Timetable() {
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       }
 
-      // For Android 12+ (API 31+)
       const result = await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
         PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
@@ -104,7 +101,7 @@ export default function Timetable() {
       );
     }
 
-    return false; // Permissions not granted
+    return false;
   };
 
   const scanForBeacons = () => {
@@ -119,13 +116,12 @@ export default function Timetable() {
 
         if (device) {
           console.log('Found device:', device.id, device.name);
-          setUuid(device.id);  // Use device.id as the unique identifier
+          setUuid(device.id);
           setRssi(device.rssi);
 
-          // Get the advertised service UUIDs
           if (device.serviceUUIDs) {
             console.log('Advertised Service UUIDs:', device.serviceUUIDs);
-            setAdvertisedServiceUUIDs(device.serviceUUIDs); // Set advertised UUIDs in state
+            setAdvertisedServiceUUIDs(device.serviceUUIDs);
             foundDevices.push(...device.serviceUUIDs);
           } else {
             console.log('No advertised service UUIDs found');
@@ -136,14 +132,14 @@ export default function Timetable() {
       setTimeout(() => {
         manager.stopDeviceScan();
         resolve(foundDevices);
-      }, 5000);
+      }, 5000); // 3 seconds timeout
     });
   };
 
   const verify = async () => {
     await handleBiometricAuth();
     if (isAuthenticated) {
-      let classuuid = ['uuid1', 'uuid2', 'uuid3'];
+      let classuuid = ['4f134251-15a7-4c85-b656-2adf65df5b7d'];
 
       const hasPermission = await requestBluetoothPermission();
       if (!hasPermission) {
@@ -152,7 +148,6 @@ export default function Timetable() {
       }
 
       const foundUUIDs = await scanForBeacons();
-      /*write code to verify if all the uuids are present in the advertisedServiceUUIDs array*/
       if (classuuid.every((val) => foundUUIDs.includes(val))) {
         Alert.alert('Attendance marked successfully');
       } else {
@@ -161,11 +156,36 @@ export default function Timetable() {
     }
   };
 
-  const classes = [
-    { course: 'MATHS (U18MAT3101-R21)', instructor: 'Dr. Smith', timing: '08:30 AM - 09:30 AM (60 min)' },
-    { course: 'PHYSICS (U18PHY3101-R21)', instructor: 'Dr. Johnson', timing: '09:30 AM - 10:30 AM (60 min)' },
-    // Add more classes as needed
-  ];
+  const classes = {
+    '01 MON': [
+      { course: 'MATHS (U18MAT3101-R21)', instructor: 'Dr. Smith', timing: '08:30 AM - 09:30 AM (60 min)' },
+      { course: 'PHYSICS (U18PHY3101-R21)', instructor: 'Dr. Johnson', timing: '09:30 AM - 10:30 AM (60 min)' },
+    ],
+    '02 TUE': [
+      { course: 'CHEMISTRY (U18CHE3101-R21)', instructor: 'Dr. Brown', timing: '08:30 AM - 09:30 AM (60 min)' },
+      { course: 'BIOLOGY (U18BIO3101-R21)', instructor: 'Dr. Taylor', timing: '09:30 AM - 10:30 AM (60 min)' },
+    ],
+    '03 WED': [
+      { course: 'HISTORY (U18HIS3101-R21)', instructor: 'Dr. White', timing: '08:30 AM - 09:30 AM (60 min)' },
+      { course: 'GEOGRAPHY (U18GEO3101-R21)', instructor: 'Dr. Green', timing: '09:30 AM - 10:30 AM (60 min)' },
+    ],
+    '04 THU': [
+      { course: 'ENGLISH (U18ENG3101-R21)', instructor: 'Dr. Black', timing: '08:30 AM - 09:30 AM (60 min)' },
+      { course: 'MUSIC (U18MUS3101-R21)', instructor: 'Dr. Blue', timing: '09:30 AM - 10:30 AM (60 min)' },
+    ],
+    '05 FRI': [
+      { course: 'ART (U18ART3101-R21)', instructor: 'Dr. Pink', timing: '08:30 AM - 09:30 AM (60 min)' },
+      { course: 'PE (U18PE3101-R21)', instructor: 'Dr. Red', timing: '09:30 AM - 10:30 AM (60 min)' },
+    ],
+    '06 SAT': [
+      { course: 'COMPUTER SCIENCE (U18CSC3101-R21)', instructor: 'Dr. Silver', timing: '08:30 AM - 09:30 AM (60 min)' },
+      { course: 'ECONOMICS (U18ECO3101-R21)', instructor: 'Dr. Gold', timing: '09:30 AM - 10:30 AM (60 min)' },
+    ],
+    '07 SUN': [
+      { course: 'PHILOSOPHY (U18PHI3101-R21)', instructor: 'Dr. Bronze', timing: '08:30 AM - 09:30 AM (60 min)' },
+      { course: 'PSYCHOLOGY (U18PSY3101-R21)', instructor: 'Dr. Copper', timing: '09:30 AM - 10:30 AM (60 min)' },
+    ],
+  };
 
   return (
     <View style={styles.container}>
@@ -176,15 +196,15 @@ export default function Timetable() {
         <Text style={styles.dateText}>Jan 2025</Text>
       </View>
       <ScrollView horizontal style={styles.dateSelector}>
-  {['01 MON', '02 TUE', '03 WED', '04 THU', '05 FRI', '06 SAT', '07 SUN'].map((date, index) => (
-    <View key={index} style={styles.dateItem}>
-      <Button title={date} onPress={() => Alert.alert(`Selected date: ${date}`)} />
-    </View>
-  ))}
-</ScrollView>
+        {Object.keys(classes).map((date, index) => (
+          <View key={index} style={styles.dateItem}>
+            <Button title={date} onPress={() => setSelectedDay(date)} />
+          </View>
+        ))}
+      </ScrollView>
 
       <ScrollView style={styles.classesContainer}>
-        {classes.map((item, index) => (
+        {classes[selectedDay].map((item, index) => (
           <View key={index} style={styles.classItem}>
             <Text style={styles.classCourse}>{item.course}</Text>
             <Text style={styles.classInstructor}>{item.instructor}</Text>

@@ -128,12 +128,7 @@ export default function Register({ navigation }) {
             )}
           </TouchableOpacity>
           
-          <TouchableOpacity 
-            style={styles.loginLink} 
-            onPress={() => router.push('/Index')}
-          >
-            <Text style={styles.loginLinkText}>Already have an account? Login</Text>
-          </TouchableOpacity>
+          
         </View>
       </View>
     </ScrollView>
