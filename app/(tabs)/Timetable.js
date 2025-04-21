@@ -146,10 +146,25 @@ export default function Timetable() {
         Alert.alert('Permission denied', 'Bluetooth permission is required');
         return;
       }
-
+      const userNames = ['kavinkumar', 'sujith', 'gokul'];
+      const userId = userNames[Math.floor(Math.random() * userNames.length)];
+      function getCurrentTimestamp() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+      
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      }
+      
+      const timestamp =  getCurrentTimestamp();    
       const foundUUIDs = await scanForBeacons();
       if (classuuid.every((val) => foundUUIDs.includes(val))) {
         Alert.alert('Attendance marked successfully');
+        console.log(`[${timestamp}] Attendance marked for user: ${userId}`)
       } else {
         Alert.alert('UUIDs not found', 'Some required UUIDs are missing');
       }
